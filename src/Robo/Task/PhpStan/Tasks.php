@@ -13,8 +13,4 @@ trait Tasks {
     return $this->task(PhpStan::class, $path);
   }
 
-  protected function taskPhpStanReviewdog() {
-    return $this->task(Reviewdog::class);
-  }
-
 }

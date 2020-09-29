@@ -2,9 +2,10 @@
 
 namespace ForumOne\CodeQuality\Robo\Plugin\Commands;
 
-class CodeSnifferCommands extends \Robo\Tasks {
+class PhpStanCommands extends \Robo\Tasks {
 
   use \ForumOne\CodeQuality\Robo\Task\PhpStan\Tasks;
+  use \ForumOne\CodeQuality\Robo\Task\Tasks;
 
   /**
    * Run the code sniffer on custom code.
@@ -20,7 +21,9 @@ class CodeSnifferCommands extends \Robo\Tasks {
     $this->taskPhpStan('public/modules/custom')->run();
 
     $this->say('Filtering results...');
-    return $this->taskPhpStanReviewdog()->run();
+    return $this->taskReviewdog()
+      ->reportFile('tests/reports/phpstan/phpstan.xml')
+      ->run();
   }
 
 }

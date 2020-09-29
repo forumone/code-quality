@@ -22,10 +22,4 @@ trait Tasks {
     return $this->task(PhpcsDrupal::class, $path);
   }
 
-  /**
-   * @return \ForumOne\CodeQuality\Robo\Task\Phpcs\Reviewdog|\Robo\Collection\CollectionBuilder
-   */
-  protected function taskPhpcsReviewdog() {
-    return $this->task(Reviewdog::class);
-  }
 }

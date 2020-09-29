@@ -2,14 +2,11 @@
 
 namespace ForumOne\CodeQuality\Robo\Plugin\Commands;
 
-
-
-use Composer\IO\ConsoleIO;
-use PHPStan\Type\VerbosityLevel;
 use Robo\Contract\VerbosityThresholdInterface;
 
 class CodeSnifferCommands extends \Robo\Tasks {
 
+  use \ForumOne\CodeQuality\Robo\Task\Tasks;
   use \ForumOne\CodeQuality\Robo\Task\Phpcs\Tasks;
 
   /**
@@ -28,7 +25,9 @@ class CodeSnifferCommands extends \Robo\Tasks {
       ->run();
 
     $this->say('Filtering results...');
-    return $this->taskPhpcsReviewdog()->run();
+    return $this->taskReviewdog()
+      ->reportFile('tests/reports/phpcs/phpcs.xml')
+      ->run();
   }
 
 }
