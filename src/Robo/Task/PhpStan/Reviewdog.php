@@ -1,6 +1,6 @@
 <?php
 
-namespace ForumOne\CodeQuality\Robo\Task\Phpcs;
+namespace ForumOne\CodeQuality\Robo\Task\PhpStan;
 
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Task\BaseTask;
@@ -11,8 +11,8 @@ class Reviewdog extends BaseTask implements BuilderAwareInterface {
   use TaskAccessor;
   use \Robo\Task\Base\loadTasks;
 
-  protected $reportsPath = 'tests/reports/phpcs/';
-  protected $reportName = 'phpcs.xml';
+  protected $reportsPath = 'tests/reports/phpstan/';
+  protected $reportName = 'phpstan.xml';
   protected $basepath = '/code';
   protected $gitDiff = 'git diff';
 

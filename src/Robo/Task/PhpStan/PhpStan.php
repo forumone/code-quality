@@ -1,19 +1,19 @@
 <?php
 
-namespace ForumOne\CodeQuality\Robo\Task\Phpcs;
+namespace ForumOne\CodeQuality\Robo\Task\PhpStan;
 
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Task\BaseTask;
 use Robo\TaskAccessor;
 
-class Phpcs extends BaseTask implements BuilderAwareInterface {
+class PhpStan extends BaseTask implements BuilderAwareInterface {
 
   use TaskAccessor;
   use \Robo\Task\Filesystem\loadTasks;
   use \Robo\Task\Base\loadTasks;
 
-  protected $reportsPath = 'tests/reports/phpcs/';
-  protected $reportName = 'phpcs.xml';
+  protected $reportsPath = 'tests/reports/phpstan/';
+  protected $reportName = 'phpstan.xml';
   protected $extensions;
   protected $ignore_patterns;
   protected $standard;
@@ -96,15 +96,15 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Base\Exec
    */
   protected function getExecTask() {
-    return  $this->taskExec('phpcs')
-      ->option('report', 'checkstyle', '=')
-      ->option('report-checkstyle', $this->reportsPath . $this->reportName, '=')
-      ->option('report', 'summary', '=')
-      ->option('extensions', $this->extensions, '=')
-      ->option('ignore', $this->ignore_patterns, '=')
-      ->option('standard', $this->standard, '=')
-      ->option('basepath', $this->basepath, '=')
+    // Assemble the command with dynamic arguments using the taskExec structure.
+    $execTask = $this->taskExec('phpstan analyse')
+      ->option('error-format', 'checkstyle', '=')
       ->arg($this->path);
+
+    // Pull the assembled command into a separate execution task to enable
+    // funneling the output to a file for ingestion from other tools.
+    $reportFile = $this->reportsPath . $this->reportName;
+    return $this->taskExec($execTask->getCommand() . ' > ' . $reportFile);
   }
 
   public function run() {
