@@ -138,9 +138,8 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
    */
   public function taskPhpcs() {
     return  $this->taskExec('phpcs')
-      ->option('report', 'checkstyle', '=')
-      ->option('report-checkstyle', $this->reportFile, '=')
       ->option('report', 'summary', '=')
+      ->option('report-checkstyle', $this->reportFile, '=')
       ->option('extensions', $this->extensions, '=')
       ->option('ignore', $this->ignore_patterns, '=')
       ->option('standard', $this->standard, '=')
