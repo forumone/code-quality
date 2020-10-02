@@ -2,24 +2,18 @@
 
 namespace ForumOne\CodeQuality\Robo\Task\Phpcs;
 
-use Robo\Contract\BuilderAwareInterface;
-use Robo\Task\BaseTask;
-use Robo\TaskAccessor;
+use ForumOne\CodeQuality\Robo\Task\CodeQualityBaseTask;
+use Robo\Common\BuilderAwareTrait;
 
-class Phpcs extends BaseTask implements BuilderAwareInterface {
+class Phpcs extends CodeQualityBaseTask {
 
-  use TaskAccessor;
-  use \Robo\Task\Filesystem\loadTasks;
+  use BuilderAwareTrait;
   use \Robo\Task\Base\loadTasks;
 
-  protected $reportFile = 'tests/reports/phpcs/phpcs.xml';
-  protected $format = 'checkstyle';
   protected $extensions;
   protected $ignore_patterns;
   protected $standard;
   protected $basepath = '/code';
-  protected $path;
-  protected $preset;
 
   const PRESETS = [
     'drupal8' => [
@@ -38,58 +32,6 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
       'path' => 'services/wordpress/',
     ]
   ];
-
-  /**
-   * Assign the path to be scanned.
-   *
-   * @param string $path
-   *
-   * @return $this
-   */
-  public function path(string $path) {
-    $this->path = $path;
-
-    return $this;
-  }
-
-  /**
-   * Assign known preset values for default configuration.
-   *
-   * These defaults may be further customized with additional property-
-   * specific assignments afterward.
-   *
-   * @param string $preset
-   *
-   * @return $this
-   */
-  public function preset(string $preset) {
-    assert(isset(self::PRESETS[$preset]),
-      sprintf('Unknown preset: "%s"', $preset));
-
-    $this->preset = $preset;
-
-    // Assign all preset values into object properties.
-    foreach (self::PRESETS[$preset] as $key => $value) {
-      assert(property_exists($this, $key),
-        sprintf('Unknown preset attribute: "%s" in preset "%s"', $key, $preset));
-      $this->$key = $value;
-    }
-
-    return $this;
-  }
-
-  /**
-   * Set the file to write result output to.
-   *
-   * @param string $reportFile
-   *
-   * @return $this
-   */
-  public function reportFile(string $reportFile) {
-    $this->reportFile = $reportFile;
-
-    return $this;
-  }
 
   /**
    * Set file extensions to filter scanning.
@@ -141,27 +83,6 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
     $this->basepath = $basepath;
 
     return $this;
-  }
-
-  /**
-   * Prepare the task report directory for generating a new report file.
-   *
-   * Creates the report directory if it doesn't exist, or cleans it if it does.
-   *
-   * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Filesystem\CleanDir|\Robo\Task\Filesystem\FilesystemStack
-   */
-  public function taskPrepare() {
-    // Create or clean the reports directory as needed.
-    $reportsDirectory = dirname($this->reportFile);
-    if (!file_exists($reportsDirectory)) {
-      $task = $this->taskFilesystemStack()
-        ->mkdir($reportsDirectory);
-    }
-    else {
-      $task = $this->taskCleanDir($reportsDirectory);
-    }
-
-    return $task;
   }
 
   /**
