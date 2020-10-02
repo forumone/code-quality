@@ -27,10 +27,14 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
       'extensions' => 'php,module,inc,profile,theme,install',
       'ignore_patterns' => 'contrib/,core/,vendor/',
       'standard' => 'Drupal,DrupalPractice',
-      'path' => 'public/',
+      'path' => 'services/drupal/public/',
     ],
     'wordpress' => [
-
+      'reportFile' => 'tests/reports/phpcs/phpcs.xml',
+      'format' => 'checkstyle',
+      'extensions' => 'php,inc',
+      'standard' => 'WordPress',
+      'path' => 'services/wordpress/',
     ]
   ];
 
@@ -68,6 +72,8 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
   }
 
   /**
+   * Set the file to write result output to.
+   *
    * @param string $reportFile
    *
    * @return $this
@@ -79,6 +85,8 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
   }
 
   /**
+   * Set file extensions to filter scanning.
+   *
    * @param string $extensions
    *
    * @return $this
@@ -90,6 +98,8 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
   }
 
   /**
+   * Set patterns to ignore for scanning.
+   *
    * @param string $ignore_patterns
    *
    * @return $this
@@ -101,6 +111,8 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
   }
 
   /**
+   * Set standards for code sniffs.
+   *
    * @param string $standard
    *
    * @return $this
@@ -112,6 +124,8 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
   }
 
   /**
+   * Set the base path to be removed from result paths.
+   *
    * @param string $basepath
    *
    * @return $this
@@ -122,6 +136,13 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
     return $this;
   }
 
+  /**
+   * Prepare the task report directory for generating a new report file.
+   *
+   * Creates the report directory if it doesn't exist, or cleans it if it does.
+   *
+   * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Filesystem\CleanDir|\Robo\Task\Filesystem\FilesystemStack
+   */
   public function taskPrepare() {
     // Create or clean the reports directory as needed.
     $reportsDirectory = dirname($this->reportFile);
@@ -152,10 +173,14 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
       ->arg($this->path);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function run() {
     return $this->collectionBuilder()
       ->addTask($this->taskPrepare())
       ->addTask($this->taskPhpcs())
       ->run();
   }
+
 }
