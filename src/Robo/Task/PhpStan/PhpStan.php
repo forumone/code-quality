@@ -20,7 +20,12 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
   protected $basepath = '/code';
   protected $path;
 
-  public function __construct($path) {
+  /**
+   * Set the path to be scanned.
+   *
+   * @param string $path
+   */
+  public function path(string $path) {
     $this->path = $path;
   }
 

@@ -34,7 +34,12 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
     ]
   ];
 
-  public function __construct($path) {
+  /**
+   * Assign the path to be scanned.
+   *
+   * @param string $path
+   */
+  public function path(string $path) {
     $this->path = $path;
   }
 
