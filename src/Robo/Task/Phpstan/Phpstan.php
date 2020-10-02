@@ -10,21 +10,17 @@ class Phpstan extends CodeQualityBaseTask {
   use TaskAccessor;
   use \Robo\Task\Base\loadTasks;
 
-  protected $path;
   protected $format = 'checkstyle';
   protected $reportFile = 'tests/reports/phpstan/phpstan.xml';
+  protected $path;
   protected $preset;
 
   const PRESETS = [
     'drupal8' => [
       'path' => 'services/drupal/public/',
-      'format' => 'checkstyle',
-      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
     ],
     'wordpress' => [
       'path' => 'services/wordpress/public/',
-      'format' => 'checkstyle',
-      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
     ]
   ];
 

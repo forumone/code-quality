@@ -3,13 +3,13 @@
 namespace ForumOne\CodeQuality\Robo\Task\Phpcs;
 
 use ForumOne\CodeQuality\Robo\Task\CodeQualityBaseTask;
-use Robo\Common\BuilderAwareTrait;
 
 class Phpcs extends CodeQualityBaseTask {
 
-  use BuilderAwareTrait;
   use \Robo\Task\Base\loadTasks;
 
+  protected $reportFile = 'tests/reports/phpcs/phpcs.xml';
+  protected $format = 'checkstyle';
   protected $extensions;
   protected $ignore_patterns;
   protected $standard;
@@ -17,16 +17,12 @@ class Phpcs extends CodeQualityBaseTask {
 
   const PRESETS = [
     'drupal8' => [
-      'reportFile' => 'tests/reports/phpcs/phpcs.xml',
-      'format' => 'checkstyle',
       'extensions' => 'php,module,inc,profile,theme,install',
       'ignore_patterns' => 'contrib/,core/,vendor/',
       'standard' => 'Drupal,DrupalPractice',
       'path' => 'services/drupal/public/',
     ],
     'wordpress' => [
-      'reportFile' => 'tests/reports/phpcs/phpcs.xml',
-      'format' => 'checkstyle',
       'extensions' => 'php,inc',
       'standard' => 'WordPress',
       'path' => 'services/wordpress/',

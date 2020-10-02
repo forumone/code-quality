@@ -37,8 +37,8 @@ class CodeSnifferCommands extends \Robo\Tasks {
     // non-zero return code which kills the execution of the rest of the
     // collection and prevents filtering of the results by reviewdog.
     $this->taskPhpcs()
-      ->path('public')
       ->preset('drupal8')
+      ->path('public')
       ->run();
 
     $this->say('Filtering results...');
