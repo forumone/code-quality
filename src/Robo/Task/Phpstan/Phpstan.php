@@ -1,30 +1,31 @@
 <?php
 
-namespace ForumOne\CodeQuality\Robo\Task\PhpStan;
+namespace ForumOne\CodeQuality\Robo\Task\Phpstan;
 
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Task\BaseTask;
 use Robo\TaskAccessor;
 
-class PhpStan extends BaseTask implements BuilderAwareInterface {
+class Phpstan extends BaseTask implements BuilderAwareInterface {
 
   use TaskAccessor;
   use \Robo\Task\Filesystem\loadTasks;
   use \Robo\Task\Base\loadTasks;
 
-  protected $reportFile = 'tests/reports/phpstan/phpstan.xml';
   protected $path;
+  protected $format = 'checkstyle';
+  protected $reportFile = 'tests/reports/phpstan/phpstan.xml';
 
   const PRESET = [
     'drupal8' => [
-      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
-      'format' => 'checkstyle',
       'path' => 'services/drupal/public/',
+      'format' => 'checkstyle',
+      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
     ],
     'wordpress' => [
-      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
-      'format' => 'checkstyle',
       'path' => 'services/wordpress/public/',
+      'format' => 'checkstyle',
+      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
     ]
   ];
 
@@ -35,6 +36,15 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
    */
   public function path(string $path) {
     $this->path = $path;
+  }
+
+  /**
+   * Set the report format for output.
+   *
+   * @param string $format
+   */
+  public function format(string $format) {
+    $this->format = $format;
   }
 
   /**
@@ -103,7 +113,7 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
   public function taskPhpstan() {
     // Assemble the command with dynamic arguments using the taskExec structure.
     $execTask = $this->taskExec('phpstan analyse')
-      ->option('error-format', 'checkstyle', '=')
+      ->option('error-format', $this->format, '=')
       ->arg($this->path);
 
     // Pull the assembled command into a separate execution task to enable

@@ -9,6 +9,9 @@ class CodeSnifferCommands extends \Robo\Tasks {
   use \ForumOne\CodeQuality\Robo\Task\Phpstan\Tasks;
   use \Robo\Task\Base\loadTasks;
 
+  protected $codePath = 'public/';
+  protected $preset = 'drupal8';
+
   /**
    * Run the code sniffer scans on custom code.
    *
