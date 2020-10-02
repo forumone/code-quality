@@ -9,7 +9,7 @@ trait Tasks {
    *
    * @return \ForumOne\CodeQuality\Robo\Task\PhpStan\PhpStan|\Robo\Collection\CollectionBuilder
    */
-  protected function taskPhpStan(string $path) {
+  protected function taskPhpstan(string $path) {
     return $this->task(PhpStan::class, $path);
   }
 
