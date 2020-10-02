@@ -19,8 +19,9 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
   protected $standard;
   protected $basepath = '/code';
   protected $path;
+  protected $preset;
 
-  const PRESET = [
+  const PRESETS = [
     'drupal8' => [
       'reportFile' => 'tests/reports/phpcs/phpcs.xml',
       'format' => 'checkstyle',
@@ -62,11 +63,13 @@ class Phpcs extends BaseTask implements BuilderAwareInterface {
    * @return $this
    */
   public function preset(string $preset) {
-    assert(isset(self::PRESET[$preset]),
+    assert(isset(self::PRESETS[$preset]),
       sprintf('Unknown preset: "%s"', $preset));
 
+    $this->preset = $preset;
+
     // Assign all preset values into object properties.
-    foreach (self::PRESET[$preset] as $key => $value) {
+    foreach (self::PRESETS[$preset] as $key => $value) {
       assert(property_exists($this, $key),
         sprintf('Unknown preset attribute: "%s" in preset "%s"', $key, $preset));
       $this->$key = $value;
