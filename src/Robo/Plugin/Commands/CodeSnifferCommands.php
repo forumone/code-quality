@@ -5,8 +5,6 @@ namespace ForumOne\CodeQuality\Robo\Plugin\Commands;
 class CodeSnifferCommands extends \Robo\Tasks {
 
   use \ForumOne\CodeQuality\Robo\Task\Tasks;
-  use \ForumOne\CodeQuality\Robo\Task\Phpcs\Tasks;
-  use \ForumOne\CodeQuality\Robo\Task\Phpstan\Tasks;
   use \Robo\Task\Base\loadTasks;
 
   protected $codePath = 'public/';

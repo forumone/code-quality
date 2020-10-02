@@ -1,8 +1,7 @@
 <?php
 
-namespace ForumOne\CodeQuality\Robo\Task\Phpstan;
+namespace ForumOne\CodeQuality\Robo\Task;
 
-use ForumOne\CodeQuality\Robo\Task\CodeQualityBaseTask;
 use Robo\TaskAccessor;
 
 class Phpstan extends CodeQualityBaseTask {

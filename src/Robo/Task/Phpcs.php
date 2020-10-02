@@ -1,8 +1,6 @@
 <?php
 
-namespace ForumOne\CodeQuality\Robo\Task\Phpcs;
-
-use ForumOne\CodeQuality\Robo\Task\CodeQualityBaseTask;
+namespace ForumOne\CodeQuality\Robo\Task;
 
 class Phpcs extends CodeQualityBaseTask {
 
