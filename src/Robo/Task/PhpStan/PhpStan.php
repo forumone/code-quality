@@ -12,13 +12,21 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
   use \Robo\Task\Filesystem\loadTasks;
   use \Robo\Task\Base\loadTasks;
 
-  protected $reportsPath = 'tests/reports/phpstan/';
-  protected $reportName = 'phpstan.xml';
-  protected $extensions;
-  protected $ignore_patterns;
-  protected $standard;
-  protected $basepath = '/code';
+  protected $reportFile = 'tests/reports/phpstan/phpstan.xml';
   protected $path;
+
+  const PRESET = [
+    'drupal8' => [
+      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
+      'format' => 'checkstyle',
+      'path' => 'services/drupal/public/',
+    ],
+    'wordpress' => [
+      'reportFile' => 'tests/reports/phpstan/phpstan.xml',
+      'format' => 'checkstyle',
+      'path' => 'services/wordpress/public/',
+    ]
+  ];
 
   /**
    * Set the path to be scanned.
@@ -30,69 +38,61 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
   }
 
   /**
-   * @param string $reportsPath
+   * Set the file to write result output to.
+   *
+   * @param string $reportFile
    *
    * @return $this
    */
-  public function reportsPath(string $reportsPath) {
-    $this->reportsPath = $reportsPath;
+  public function reportFile(string $reportFile) {
+    $this->reportFile = $reportFile;
 
     return $this;
   }
 
   /**
-   * @param string $reportName
+   * Assign known preset values for default configuration.
+   *
+   * These defaults may be further customized with additional property-
+   * specific assignments afterward.
+   *
+   * @param string $preset
    *
    * @return $this
    */
-  public function reportName(string $reportName) {
-    $this->reportName = $reportName;
+  public function preset(string $preset) {
+    assert(isset(self::PRESET[$preset]),
+      sprintf('Unknown preset: "%s"', $preset));
+
+    // Assign all preset values into object properties.
+    foreach (self::PRESET[$preset] as $key => $value) {
+      assert(property_exists($this, $key),
+        sprintf('Unknown preset attribute: "%s" in preset "%s"', $key, $preset));
+      $this->$key = $value;
+    }
 
     return $this;
   }
 
   /**
-   * @param string $extensions
+   * Prepare the task report directory for generating a new report file.
    *
-   * @return $this
-   */
-  public function extensions(string $extensions) {
-    $this->extensions = $extensions;
-
-    return $this;
-  }
-
-  /**
-   * @param string $ignore_patterns
+   * Creates the report directory if it doesn't exist, or cleans it if it does.
    *
-   * @return $this
+   * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Filesystem\CleanDir|\Robo\Task\Filesystem\FilesystemStack
    */
-  public function ignore_patterns(string $ignore_patterns) {
-    $this->ignore_patterns = $ignore_patterns;
+  public function taskPrepare() {
+    // Create or clean the reports directory as needed.
+    $reportsDirectory = dirname($this->reportFile);
+    if (!file_exists($reportsDirectory)) {
+      $task = $this->taskFilesystemStack()
+        ->mkdir($reportsDirectory);
+    }
+    else {
+      $task = $this->taskCleanDir($reportsDirectory);
+    }
 
-    return $this;
-  }
-
-  /**
-   * @param string $standard
-   *
-   * @return $this
-   */
-  public function standard(string $standard) {
-    $this->standard = $standard;
-
-    return $this;
-  }
-
-  /**
-   * @param string $basepath
-   *
-   * @return $this
-   */
-  public function basepath(string $basepath) {
-    $this->basepath = $basepath;
-
-    return $this;
+    return $task;
   }
 
   /**
@@ -100,7 +100,7 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
    *
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Base\Exec
    */
-  protected function getExecTask() {
+  public function taskPhpstan() {
     // Assemble the command with dynamic arguments using the taskExec structure.
     $execTask = $this->taskExec('phpstan analyse')
       ->option('error-format', 'checkstyle', '=')
@@ -108,23 +108,17 @@ class PhpStan extends BaseTask implements BuilderAwareInterface {
 
     // Pull the assembled command into a separate execution task to enable
     // funneling the output to a file for ingestion from other tools.
-    $reportFile = $this->reportsPath . $this->reportName;
-    return $this->taskExec($execTask->getCommand() . ' > ' . $reportFile);
+    return $this->taskExec($execTask->getCommand() . ' > ' . $$this->reportFile);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function run() {
-    $collection = $this->collectionBuilder();
-
-    if (!file_exists($this->reportsPath)) {
-      $collection->addTask($this->taskFilesystemStack()
-        ->mkdir($this->reportsPath));
-    }
-    else {
-      $collection->addTask($this->taskCleanDir($this->reportsPath));
-    }
-
-    $collection->addTask($this->getExecTask());
-
-    return $collection->run();
+    return $this->collectionBuilder()
+      ->addTask($this->taskPrepare())
+      ->addTask($this->taskPhpstan())
+      ->run();
   }
+
 }
