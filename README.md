@@ -51,7 +51,7 @@ Once this is added so the package is discoverable, require the package as dev
 dependency via Composer:
 
 ```bash
-composer require --dev forumone/code-quality@dev
+composer require --dev forumone/code-quality
 ```
 
 Note additional dependencies may be suggested within the [composer.json][] file
@@ -74,7 +74,7 @@ Making the Docker image available for usage within your project is easiest to co
 ```yaml
   code-quality:
     build:
-      context: https://github.com/forumone/coder-quality
+      context: https://github.com/forumone/code-quality.git
     volumes:
       - ./:/var/www/html:cached
 #    environment:

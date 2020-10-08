@@ -1,6 +1,6 @@
 {
     "name": "forumone/code-quality",
-    "description": "Code quality tools for enforcing standards and practices within Drupal projects.",
+    "description": "Code quality tools for enforcing standards and practices within PHP-based projects.",
     "type": "library",
     "autoload": {
         "psr-4": {
