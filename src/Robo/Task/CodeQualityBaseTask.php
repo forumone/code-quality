@@ -2,6 +2,7 @@
 
 namespace ForumOne\CodeQuality\Robo\Task;
 
+use Robo\Common\DynamicParams;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Task\BaseTask;
 use Robo\TaskAccessor;
@@ -9,6 +10,7 @@ use Robo\TaskAccessor;
 abstract class CodeQualityBaseTask extends BaseTask implements BuilderAwareInterface {
 
   use TaskAccessor;
+  use DynamicParams;
   use \Robo\Task\Filesystem\loadTasks;
 
   /**
@@ -55,49 +57,7 @@ abstract class CodeQualityBaseTask extends BaseTask implements BuilderAwareInter
 
     $this->preset = $preset;
 
-    // Assign all preset values into object properties.
-    foreach (static::PRESETS[$preset] as $key => $value) {
-      assert(property_exists($this, $key),
-        sprintf('Unknown preset attribute: "%s" in preset "%s"', $key, $preset));
-      $this->$key = $value;
-    }
-
     return $this;
-  }
-
-  /**
-   * Assign the path to be scanned.
-   *
-   * @param string $path
-   *
-   * @return $this
-   */
-  public function path(string $path) {
-    $this->path = $path;
-
-    return $this;
-  }
-
-  /**
-   * Set the file to write result output to.
-   *
-   * @param string $reportFile
-   *
-   * @return $this
-   */
-  public function reportFile(string $reportFile) {
-    $this->reportFile = $reportFile;
-
-    return $this;
-  }
-
-  /**
-   * Set the report format for output.
-   *
-   * @param string $format
-   */
-  public function format(string $format) {
-    $this->format = $format;
   }
 
   /**
@@ -111,10 +71,12 @@ abstract class CodeQualityBaseTask extends BaseTask implements BuilderAwareInter
     // Create or clean the reports directory as needed.
     $reportsDirectory = dirname($this->reportFile);
     if (!file_exists($reportsDirectory)) {
+      $this->printTaskDebug(sprintf('Creating reports directory "%s"', $reportsDirectory));
       $task = $this->taskFilesystemStack()
         ->mkdir($reportsDirectory);
     }
     else {
+      $this->printTaskDebug(sprintf('Cleaning reports directory "%s"', $reportsDirectory));
       $task = $this->taskCleanDir($reportsDirectory);
     }
 
