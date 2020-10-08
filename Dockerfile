@@ -7,3 +7,5 @@ RUN wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/in
 FROM wodby/php:latest
 
 COPY --from=REVIEWDOG /go/bin/reviewdog /usr/local/bin
+
+RUN composer global require hirak/prestissimo
