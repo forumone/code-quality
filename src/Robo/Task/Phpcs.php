@@ -64,10 +64,10 @@ class Phpcs extends CodeQualityBaseTask {
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Base\Exec
    */
   public function taskPhpcs() {
-    $task =  $this->taskExec('phpcs');
+    $task = $this->taskExec('phpcs');
     $this->configureOptions($task);
 
-    $task->arg($this->path ?? '.');
+    $task->arg($this->getWithPreset('path', '.'));
 
     return $task;
   }
@@ -129,7 +129,7 @@ class Phpcs extends CodeQualityBaseTask {
    *   The task to be configured.
    * @param string $option
    *   The name of the option being set.
-   * @param string|bool|string[]|NULL $value
+   * @param string|bool|string[]|null $value
    *   (Optional) A specific value to assign to the option. If no value is
    *   provided, the property matching $option on this class will be used.
    *
@@ -148,7 +148,6 @@ class Phpcs extends CodeQualityBaseTask {
     if (is_array($value)) {
       // Ignore empty array values.
       if (count($value) > 0) {
-        print_r($value);
         $value_aggregate = implode(',', $value);
         $task->option($option, $value_aggregate, '=');
         $this->printTaskDebug(sprintf('Set array task option "%s" = "%s"', $option, $value_aggregate));
@@ -200,17 +199,44 @@ class Phpcs extends CodeQualityBaseTask {
         continue;
       }
 
-      // Prioritize all explicitly set options.
-      if (isset($this->$option) && !(is_array($this->$option) && empty($this->$option))) {
-        $this->setOption($task, $option);
-      }
-      // Check for preset values to fall back to.
-      elseif (isset($this->preset) && isset($preset[$option])) {
-        $this->setOption($task, $option, $preset[$option]);
+      $value = $this->getWithPreset($option);
+      if (!is_null($value)) {
+        $this->setOption($task, $option, $value);
       }
     }
 
     return $task;
+  }
+
+  /**
+   * Load property values with fallbacks for preset values or a default.
+   *
+   * Values on this object will be loaded in the following priority:
+   *
+   *   1. Explicitly set values and non-empty arrays
+   *   2. Preset values for the property if a preset has been defined
+   *   3. The provided default value
+   *
+   * @param string $property
+   * @param mixed $default
+   *   (Optional) A default value to provide if no higher priority values are
+   *   explicitly set.
+   *
+   * @return mixed|null
+   */
+  public function getWithPreset(string $property, $default = NULL) {
+    // Prioritize all explicitly set properties.
+    if (isset($this->$property) &&
+      !(is_array($this->$property) && empty($this->$property))) {
+      return $this->$property;
+    }
+    // Check for preset values to fall back to.
+    elseif (isset($this->preset) && isset(self::PRESETS[$this->preset][$property])) {
+      return self::PRESETS[$this->preset][$property];
+    }
+    else {
+      return $default;
+    }
   }
 
   /**
