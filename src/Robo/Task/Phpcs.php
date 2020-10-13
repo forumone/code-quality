@@ -2,7 +2,9 @@
 
 namespace ForumOne\CodeQuality\Robo\Task;
 
-class Phpcs extends CodeQualityBaseTask {
+use Robo\Contract\SimulatedInterface;
+
+class Phpcs extends CodeQualityBaseTask implements SimulatedInterface {
 
   use \Robo\Task\Base\loadTasks;
 
@@ -31,7 +33,7 @@ class Phpcs extends CodeQualityBaseTask {
   protected $standard = [];
 
   /**
-   * A path prefix to be filtered from all reporteded results.
+   * A path prefix to be filtered from all reported results.
    *
    * Define the current path as the basepath to simplify file output by removing
    * container-specific absolute paths.
@@ -224,6 +226,17 @@ class Phpcs extends CodeQualityBaseTask {
     return $this->collectionBuilder()
       ->addTask($this->taskPrepare())
       ->addTask($this->taskPhpcs())
+      ->run();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function simulate($context) {
+    return $this->collectionBuilder()
+      ->addTask($this->taskPrepare())
+      ->addTask($this->taskPhpcs())
+      ->simulated()
       ->run();
   }
 
