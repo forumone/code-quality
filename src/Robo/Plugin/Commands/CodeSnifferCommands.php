@@ -13,12 +13,8 @@ class CodeSnifferCommands extends \Robo\Tasks {
    *   Results from task execution.
    */
   public function runCodeSniffer() {
-    $collectionBuilder = $this->collectionBuilder();
-
-    return $collectionBuilder
-      ->addCode([$this, 'runPhpcs'])
-      ->addCode([$this, 'runPhpstan'])
-      ->run();
+    // @todo Execute multiple tools using a collection.
+    return $this->runPhpcs();
   }
 
   /**
@@ -27,7 +23,7 @@ class CodeSnifferCommands extends \Robo\Tasks {
    * @return \Robo\Result
    *   Results from task execution.
    */
-  public function runPhpcs() {
+  protected function runPhpcs() {
     $this->say('Running phpcs...');
     // Run as an independent collection since any issues discovered cause a
     // non-zero return code which kills the execution of the rest of the
@@ -54,7 +50,7 @@ class CodeSnifferCommands extends \Robo\Tasks {
    * @return \Robo\Result
    *   Results from task execution.
    */
-  public function runPhpstan() {
+  protected function runPhpstan() {
     $this->say('Running PHPStan...');
     // Run as an independent collection since any issues discovered cause a
     // non-zero return code which kills the execution of the rest of the
