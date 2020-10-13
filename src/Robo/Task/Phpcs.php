@@ -2,15 +2,18 @@
 
 namespace ForumOne\CodeQuality\Robo\Task;
 
-use Robo\Common\DynamicParams;
-use Robo\Contract\TaskInterface;
-
 class Phpcs extends CodeQualityBaseTask {
 
   use \Robo\Task\Base\loadTasks;
-  use DynamicParams;
 
+  /**
+   * {@inheritdoc}
+   */
   protected $reportFile = 'tests/reports/phpcs/phpcs.xml';
+
+  /**
+   * {@inheritdoc}
+   */
   protected $format = 'checkstyle';
 
   /**
@@ -28,6 +31,8 @@ class Phpcs extends CodeQualityBaseTask {
   protected $standard = [];
 
   /**
+   * A path prefix to be filtered from all reporteded results.
+   *
    * Define the current path as the basepath to simplify file output by removing
    * container-specific absolute paths.
    *
@@ -55,13 +60,14 @@ class Phpcs extends CodeQualityBaseTask {
       'extensions' => 'php,inc',
       'standard' => 'WordPress',
       'path' => 'services/wordpress/',
-    ]
+    ],
   ];
 
   /**
    * Get the configured execution task for adding to a collection.
    *
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Base\Exec
+   *   The configured task for execution.
    */
   public function taskPhpcs() {
     $task = $this->taskExec('phpcs');
@@ -72,6 +78,12 @@ class Phpcs extends CodeQualityBaseTask {
     return $task;
   }
 
+  /**
+   * Get a list of configurable options for the command.
+   *
+   * @return string[]
+   *   A list of configurable options to customize the command execution.
+   */
   public function getAvailableOptions() {
     // @todo Expand this more completely.
     return [
@@ -189,12 +201,9 @@ class Phpcs extends CodeQualityBaseTask {
       $task->option($option, $value, '=');
     }
 
-    // Prepare any preset values for use if available.
-    $preset = empty($this->preset) ?: static::PRESETS[$this->preset];
-
     // Add remaining options.
     foreach ($this->getAvailableOptions() as $option) {
-      // Skip assignment for any options that were handles independently.
+      // Skip assignment for any options that were handled independently.
       if (in_array($option, ['report', 'path'])) {
         continue;
       }
@@ -206,37 +215,6 @@ class Phpcs extends CodeQualityBaseTask {
     }
 
     return $task;
-  }
-
-  /**
-   * Load property values with fallbacks for preset values or a default.
-   *
-   * Values on this object will be loaded in the following priority:
-   *
-   *   1. Explicitly set values and non-empty arrays
-   *   2. Preset values for the property if a preset has been defined
-   *   3. The provided default value
-   *
-   * @param string $property
-   * @param mixed $default
-   *   (Optional) A default value to provide if no higher priority values are
-   *   explicitly set.
-   *
-   * @return mixed|null
-   */
-  public function getWithPreset(string $property, $default = NULL) {
-    // Prioritize all explicitly set properties.
-    if (isset($this->$property) &&
-      !(is_array($this->$property) && empty($this->$property))) {
-      return $this->$property;
-    }
-    // Check for preset values to fall back to.
-    elseif (isset($this->preset) && isset(self::PRESETS[$this->preset][$property])) {
-      return self::PRESETS[$this->preset][$property];
-    }
-    else {
-      return $default;
-    }
   }
 
   /**

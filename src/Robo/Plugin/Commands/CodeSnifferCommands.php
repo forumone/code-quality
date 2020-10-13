@@ -5,15 +5,12 @@ namespace ForumOne\CodeQuality\Robo\Plugin\Commands;
 class CodeSnifferCommands extends \Robo\Tasks {
 
   use \ForumOne\CodeQuality\Robo\Task\Tasks;
-  use \Robo\Task\Base\loadTasks;
-
-  protected $codePath = 'public/';
-  protected $preset = 'drupal8';
 
   /**
    * Run the code sniffer scans on custom code.
    *
    * @return \Robo\Result
+   *   Results from task execution.
    */
   public function runCodeSniffer() {
     $collectionBuilder = $this->collectionBuilder();
@@ -28,39 +25,54 @@ class CodeSnifferCommands extends \Robo\Tasks {
    * Run PHPCS on custom code.
    *
    * @return \Robo\Result
+   *   Results from task execution.
    */
   public function runPhpcs() {
     $this->say('Running phpcs...');
     // Run as an independent collection since any issues discovered cause a
     // non-zero return code which kills the execution of the rest of the
     // collection and prevents filtering of the results by reviewdog.
-    $this->taskPhpcs()
-      ->run();
+    $result = $this->taskPhpcs()->run();
 
-    $this->say('Filtering results...');
-    return $this->taskReviewdog()
-      ->reportFile('tests/reports/phpcs/phpcs.xml')
-      ->run();
+    // Filter with Reviewdog if errors were found with an acceptable code.
+    if ($result->wasSuccessful()) {
+      $result->setMessage('No errors found.');
+    }
+    elseif (in_array($result->getExitCode(), [1, 2], TRUE)) {
+      $this->say('Filtering results...');
+      $result = $this->taskReviewdog()
+        ->reportFile('tests/reports/phpcs/phpcs.xml')
+        ->run();
+    }
+
+    return $result;
   }
 
   /**
    * Run the PHPStan on custom code.
    *
    * @return \Robo\Result
+   *   Results from task execution.
    */
   public function runPhpstan() {
     $this->say('Running PHPStan...');
     // Run as an independent collection since any issues discovered cause a
     // non-zero return code which kills the execution of the rest of the
     // collection and prevents filtering of the results by reviewdog.
-    $this->taskPhpstan()
-      ->path('public/modules/custom')
-      ->run();
+    $result = $this->taskPhpstan()->run();
 
-    $this->say('Filtering results...');
-    return $this->taskReviewdog()
-      ->reportFile('tests/reports/phpstan/phpstan.xml')
-      ->run();
+    // Filter with Reviewdog if errors were found with an acceptable code.
+    if ($result->wasSuccessful()) {
+      $result->setMessage('No errors found.');
+    }
+    elseif (in_array($result->getExitCode(), [1, 2], TRUE)) {
+      $this->say('Filtering results...');
+      $result = $this->taskReviewdog()
+        ->reportFile('tests/reports/phpstan/phpstan.xml')
+        ->run();
+    }
+
+    return $result;
   }
 
 }

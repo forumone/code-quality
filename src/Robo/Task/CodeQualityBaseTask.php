@@ -48,6 +48,7 @@ abstract class CodeQualityBaseTask extends BaseTask implements BuilderAwareInter
    * specific assignments afterward.
    *
    * @param string $preset
+   *   The identifier for the preset to be used.
    *
    * @return $this
    */
@@ -61,11 +62,45 @@ abstract class CodeQualityBaseTask extends BaseTask implements BuilderAwareInter
   }
 
   /**
+   * Load property values with fallbacks for preset values or a default.
+   *
+   * Values on this object will be loaded in the following priority:
+   *
+   *   1. Explicitly set values and non-empty arrays
+   *   2. Preset values for the property if a preset has been defined
+   *   3. The provided default value
+   *
+   * @param string $property
+   *   The name of the property to be checked.
+   * @param mixed $default
+   *   (Optional) A default value to provide if no higher priority values are
+   *   explicitly set.
+   *
+   * @return mixed|null
+   *   The property value with the highest priority or null if unavailable.
+   */
+  public function getWithPreset(string $property, $default = NULL) {
+    // Prioritize all explicitly set properties.
+    if (isset($this->$property) &&
+      !(is_array($this->$property) && empty($this->$property))) {
+      return $this->$property;
+    }
+    // Check for preset values to fall back to.
+    elseif (isset($this->preset) && isset(static::PRESETS[$this->preset][$property])) {
+      return static::PRESETS[$this->preset][$property];
+    }
+    else {
+      return $default;
+    }
+  }
+
+  /**
    * Prepare the task report directory for generating a new report file.
    *
    * Creates the report directory if it doesn't exist, or cleans it if it does.
    *
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Filesystem\CleanDir|\Robo\Task\Filesystem\FilesystemStack
+   *   A configured task for preparing the filesystem for reporting output.
    */
   public function taskPrepare() {
     // Create or clean the reports directory as needed.
