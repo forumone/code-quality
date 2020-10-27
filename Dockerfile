@@ -8,4 +8,4 @@ FROM wodby/php:latest
 
 COPY --from=REVIEWDOG /go/bin/reviewdog /usr/local/bin
 
-RUN composer global require hirak/prestissimo
+CMD ['robo']
