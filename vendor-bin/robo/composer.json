@@ -1,0 +1,12 @@
+{
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/code-quality"
+    }
+  ],
+  "require": {
+    "consolidation/robo": "*",
+    "forumone/code-quality": "@dev"
+  }
+}

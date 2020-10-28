@@ -1,0 +1,7 @@
+{
+  "require": {
+    "phpstan/extension-installer": "^1.0.5",
+    "phpstan/phpstan-deprecation-rules": "^0.12.5",
+    "mglaman/phpstan-drupal": "*"
+  }
+}

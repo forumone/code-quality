@@ -8,19 +8,6 @@
         }
     },
     "require": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
-        "friendsofphp/php-cs-fixer": "^2.16",
-        "nette/neon": "^3.2.1",
-        "php-parallel-lint/php-console-highlighter": "^0.5",
-        "php-parallel-lint/php-parallel-lint": "^1.2",
-        "phpstan/extension-installer": "^1.0.5",
-        "phpstan/phpstan-deprecation-rules": "^0.12.5",
-        "sensiolabs/security-checker": "*",
-        "squizlabs/php_codesniffer": "^3.5"
-    },
-    "suggest": {
-        "drupal/coder": "Adds coding standards for Drupal projects.",
-        "mglaman/phpstan-drupal": "Adds PHPStan configuration for Drupal projects.",
-        "mglaman/phpstan-drupal-deprecations": "PHPStan configuration to scan for Drupal deprecations."
+      "consolidation/robo": "*"
     }
 }
